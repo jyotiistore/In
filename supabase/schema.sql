@@ -62,3 +62,22 @@ create policy "Admins manage orders" on public.orders for all
 
 -- Recommended: create a private admin user in Supabase Auth, then set app_metadata.role = admin
 -- from a trusted server/Admin API only. Never expose the service_role key in frontend code.
+
+-- Store profile/settings (run this block if the core schema was already installed).
+create table if not exists public.store_settings (
+ id boolean primary key default true check (id = true),
+ store_name text not null default 'My Store',
+ about_text text not null default '',
+ phone text not null default '',
+ email text not null default '',
+ address text not null default '',
+ updated_at timestamptz not null default now()
+);
+alter table public.store_settings enable row level security;
+drop policy if exists "Public read store settings" on public.store_settings;
+create policy "Public read store settings" on public.store_settings for select using (true);
+drop policy if exists "Admins manage store settings" on public.store_settings;
+create policy "Admins manage store settings" on public.store_settings for all
+ using ((auth.jwt()->'app_metadata'->>'role') = 'admin')
+ with check ((auth.jwt()->'app_metadata'->>'role') = 'admin');
+insert into public.store_settings (id) values (true) on conflict (id) do nothing;
