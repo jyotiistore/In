@@ -1,0 +1,1 @@
+import Link from "next/link";export default function About(){return <main className="wrap"><Link href="/">← Store</Link><div className="panel"><h1>About Us</h1><p>Welcome to My Store. Update this page with your shop story, contact number, address, and customer support hours.</p><p>Contact: Add your business contact details here.</p></div></main>}
